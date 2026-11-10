@@ -1,0 +1,21 @@
+<header>
+  <p>Bienvenido a {{ title() }}</p>
+
+  <nav>
+    <ul>
+      <li><a routerLink="/">Inicio</a></li>
+      <li><a routerLink="/catalogo">Catálogo</a></li>
+      <li>
+        @if (auth.isAuthenticated()) {
+          <a href="a" (click)="auth.logout();$event.preventDefault()">Cerrar sesion </a>
+        } @else {
+          <a routerLink="/login">Iniciar sesión</a>
+        }
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<router-outlet />
+
+<footer>{{ footer() }}</footer>
