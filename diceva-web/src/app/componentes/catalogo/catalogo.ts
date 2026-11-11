@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { JuegosService } from '../../servicios/JuegosMesa';
+import { JuegoMesa } from '../../modelos/juegoMesa';
 
 @Component({
   imports: [],
@@ -6,4 +10,11 @@ import { Component } from '@angular/core';
   styleUrl: './catalogo.css',
   templateUrl: './catalogo.html',
 })
-export class Catalogo {}
+export class Catalogo {
+  private juegosService = inject(JuegosService);
+
+  juegos = toSignal(
+    this.juegosService.listar().pipe(map((pagina) => pagina.contenido)),
+    { initialValue: [] as JuegoMesa[] }
+  );
+}

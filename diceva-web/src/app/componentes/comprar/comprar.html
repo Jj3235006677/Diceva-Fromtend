@@ -1,0 +1,20 @@
+<form [formGroup]="compraForm" (ngSubmit)="onSubmit()">
+    <div>
+        <label>ID del juego (por ejemplo: aaaaaaaa-1111-1111-1111-111111111111):</label>
+        <input type="text" formControlName="idJuego" />
+        @if (compraForm.get('idJuego')?.invalid && compraForm.get('idJuego')?.touched) {
+            <div class="error">El juego es obligatorio.</div>
+        }
+    </div>
+
+    <div>
+        <label>Cantidad:</label>
+        <input type="number" min="1" formControlName="cantidad" />
+        @if (compraForm.get('cantidad')?.invalid && compraForm.get('cantidad')?.touched) {
+            <div class="error">La cantidad debe ser mínimo 1.</div>
+        }
+    </div>
+
+    <button type="submit" [disabled]="compraForm.invalid || isLoading()">Comprar</button>
+    <div>{{ result() }}</div>
+</form>

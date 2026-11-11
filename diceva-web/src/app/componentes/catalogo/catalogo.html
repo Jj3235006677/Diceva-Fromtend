@@ -1,1 +1,15 @@
-<p>catalogo works!</p>
+<h2>Catálogo</h2>
+
+@if (juegos().length === 0) {
+  <p>Todavía no hay juegos publicados.</p>
+} @else {
+  <ul>
+    @for (juego of juegos(); track juego.id) {
+      <li>
+        <strong>{{ juego.nombre }}</strong>
+        ({{ juego.id }}) :
+        {{ juego.descripcion }} - {{ juego.precio.precioProducto }} COP
+      </li>
+    }
+  </ul>
+}

@@ -5,9 +5,12 @@
     <ul>
       <li><a routerLink="/">Inicio</a></li>
       <li><a routerLink="/catalogo">Catálogo</a></li>
+      @if (auth.isAuthenticated()) {
+        <li><a routerLink="/comprar">Comprar</a></li>
+      }
       <li>
         @if (auth.isAuthenticated()) {
-          <a href="a" (click)="auth.logout();$event.preventDefault()">Cerrar sesion </a>
+          <button type="button" (click)="auth.logout()">Cerrar sesión</button>
         } @else {
           <a routerLink="/login">Iniciar sesión</a>
         }
