@@ -1,15 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
-import { Auth } from './servicios/auth';
+import { Component } from '@angular/core';
+import { RouterOutlet, } from '@angular/router';
+import { Header } from './componentes/header/header';
+import {Footer} from './componentes/footer/footer';
 
 @Component({
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, Footer, Header],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
 export class App {
-  auth = inject(Auth);
-  title = signal('Diceva Juegos de mesa');
-  footer = signal('Universidad del Quindío');
+  
 }

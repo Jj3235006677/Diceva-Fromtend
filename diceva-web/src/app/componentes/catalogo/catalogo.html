@@ -1,15 +1,62 @@
-<h2>Catálogo</h2>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 id="titulo-catalogo" class="h3 mb-0">
+      <i class="fa-solid fa-dice me-2"></i>Catálogo de juegos de mesa
+    </h1>
+  </div>
 
-@if (juegos().length === 0) {
-  <p>Todavía no hay juegos publicados.</p>
-} @else {
-  <ul>
-    @for (juego of juegos(); track juego.id) {
-      <li>
-        <strong>{{ juego.nombre }}</strong>
-        ({{ juego.id }}) :
-        {{ juego.descripcion }} - {{ juego.precio.precioProducto }} COP
-      </li>
-    }
-  </ul>
-}
+  @if (juegos().length === 0) {
+    <!-- Cuando no hay juegos -->
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-box-open fa-3x mb-3"></i>
+      <p class="h5">Todavía no hay juegos publicados.</p>
+    </div>
+  } @else {
+    <!-- Una ficha por juego -->
+    <div class="row g-3">
+      @for (juego of juegos(); track juego.id) {
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 juego-card" [class.agotado]="juego.stock === 0">
+
+            <img [src]="juego.imagenUrl" [alt]="juego.nombre"
+                 class="card-img-top juego-img"
+                 (error)="imagenRota($event)" />
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="fw-semibold">{{ juego.nombre }}</span>
+              <span class="badge {{ badgeEstado(juego.estado) }}">
+                {{ juego.estado }}
+              </span>
+            </div>
+
+            <div class="card-body">
+              <p class="small text-muted mb-2">{{ juego.descripcion }}</p>
+              <p class="mb-2">
+                <i class="fa-solid fa-tag me-1"></i>
+                {{ juego.precio.precioProducto | number:'1.0-0' }} COP
+              </p>
+              <p class="text-muted small mb-0">
+                <i class="fa-solid fa-users me-1"></i>
+                {{ juego.rangoJugadores.minimoJugadores }}-{{ juego.rangoJugadores.maximoJugadores }} jugadores
+                · {{ juego.edadRecomendada }}+ años
+              </p>
+              <p class="small mb-0 mt-2">
+                @if (juego.stock > 0) {
+                  <i class="fa-solid fa-circle-check text-success me-1"></i>{{ juego.stock }} disponibles
+                } @else {
+                  <i class="fa-solid fa-circle-xmark text-danger me-1"></i>Agotado
+                }
+              </p>
+            </div>
+
+            <div class="card-footer text-end">
+              <a routerLink="/comprar" class="btn btn-sm btn-primary">
+                <i class="fa-solid fa-cart-shopping me-1"></i>Comprar
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

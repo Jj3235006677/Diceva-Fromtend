@@ -1,0 +1,10 @@
+
+.juego-img {
+  height: 180px;
+  object-fit: cover;
+}
+ 
+.juego-card.agotado {
+  opacity: 0.6;
+}
+ 
