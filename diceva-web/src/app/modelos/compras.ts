@@ -17,11 +17,16 @@ export interface RealizarCompraRequest {
 
 // Espejo de CompraResponse
 export interface CompraResponse {
+ 
+ 
+ 
   id: string;
   detalles: DetalleCompra[];
   cedulaUsuario: string;
   precioTotal: Precio;
   fechaCompra: string;
+  
+  
   
   estadoPago: EstadoPago;
 }
