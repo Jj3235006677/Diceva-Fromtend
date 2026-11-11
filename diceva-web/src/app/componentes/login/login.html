@@ -1,26 +1,54 @@
-<form [formGroup]="LoginForm" (ngSubmit)="onSubmit()">
-    <div>
-        <label>Correo electrónico:</label>
-        <input type="email" formControlName="correo"/>
-        @if (LoginForm.get('correo')?.invalid && LoginForm.get('correo')?.touched) {
-            <div class="error">Por favor ingrese un correo electrónico válido.</div>
-        }
-    </div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow-sm">
+        <div class="card-header text-center py-3">
+          <h5 class="mb-0">
+            <i class="fa-solid fa-right-to-bracket me-2"></i>Iniciar sesión
+          </h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="LoginForm" (ngSubmit)="onSubmit()">
 
-    <div>
-        <label>Contraseña:</label>
-        <input type="password" formControlName="contraseña"/>
-        @if (LoginForm.get('contraseña')?.invalid && LoginForm.get('contraseña')?.touched) {
-            <div class="error">Por favor ingrese una contraseña.</div>
-        }
-    </div>
+            <div class="mb-3">
+              <label class="form-label">Correo electrónico</label>
+              <input type="email" formControlName="correo"
+                     class="form-control" placeholder="correo@ejemplo.com" />
+              @if (LoginForm.get('correo')?.invalid && LoginForm.get('correo')?.touched) {
+                <div class="text-danger small mt-1">Ingresa un correo electrónico válido.</div>
+              }
+            </div>
 
-    <button type="submit" [disabled]="!canSubmit()">
-        @if (isLoading()) {
-            Ingresando...
-        } @else {
-            Ingresar
-        }
-    </button>
-    <div>{{ result() }}</div>
-</form>
+            <div class="mb-3">
+              <label class="form-label">Contraseña</label>
+              <input type="password" formControlName="contraseña"
+                     class="form-control" placeholder="••••••" />
+              @if (LoginForm.get('contraseña')?.invalid && LoginForm.get('contraseña')?.touched) {
+                <div class="text-danger small mt-1">La contraseña debe tener al menos 6 caracteres.</div>
+              }
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary" [disabled]="!canSubmit()">
+                @if (isLoading()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>Ingresando...
+                } @else {
+                  <i class="fa-solid fa-right-to-bracket me-2"></i>Ingresar
+                }
+              </button>
+            </div>
+
+            @if (result()) {
+              <div class="alert mt-3"
+                   [class.alert-success]="result().includes('correctamente')"
+                   [class.alert-danger]="!result().includes('correctamente')">
+                {{ result() }}
+              </div>
+            }
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
