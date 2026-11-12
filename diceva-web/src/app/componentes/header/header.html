@@ -33,8 +33,15 @@
         }
       </ul>
 
-      <div class="d-flex gap-2">
+            <div class="d-flex gap-2 align-items-center">
         @if (authService.isAuthenticated()) {
+                    <div class="usuario d-flex align-items-center gap-2 me-2">
+            <span class="avatar">{{ authService.nombre().charAt(0) }}</span>
+            <div class="lh-sm">
+              <small class="text-muted d-block">Hola</small>
+              <span class="fw-semibold">{{ authService.nombre() }}</span>
+            </div>
+          </div>
           <button class="btn btn-outline-danger btn-sm" (click)="cerrarSesion()">
             <i class="fa-solid fa-right-from-bracket me-1"></i>Cerrar sesión
           </button>

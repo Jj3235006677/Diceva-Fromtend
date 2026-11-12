@@ -1,20 +1,71 @@
-<form [formGroup]="compraForm" (ngSubmit)="onSubmit()">
-    <div>
-        <label>ID del juego (por ejemplo: aaaaaaaa-1111-1111-1111-111111111111):</label>
-        <input type="text" formControlName="idJuego" />
-        @if (compraForm.get('idJuego')?.invalid && compraForm.get('idJuego')?.touched) {
-            <div class="error">El juego es obligatorio.</div>
-        }
-    </div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
 
-    <div>
-        <label>Cantidad:</label>
-        <input type="number" min="1" formControlName="cantidad" />
-        @if (compraForm.get('cantidad')?.invalid && compraForm.get('cantidad')?.touched) {
-            <div class="error">La cantidad debe ser mínimo 1.</div>
-        }
-    </div>
+      @if (juego(); as j) {
+        <div class="card shadow-sm">
+          <div class="card-header py-3">
+            <h1 class="h5 mb-0">
+              <i class="fa-solid fa-cart-shopping me-2"></i>Comprar {{ j.nombre }}
+            </h1>
+          </div>
 
-    <button type="submit" [disabled]="compraForm.invalid || isLoading()">Comprar</button>
-    <div>{{ result() }}</div>
-</form>
+          <div class="card-body">
+            <p class="text-muted mb-2">{{ j.descripcion }}</p>
+            <p class="mb-1">
+              <i class="fa-solid fa-tag me-1"></i>
+              Precio: <strong>{{ j.precio.precioProducto | number:'1.0-0' }} COP</strong>
+            </p>
+            <p class="small text-muted">
+              <i class="fa-solid fa-box me-1"></i>{{ j.stock }} disponibles
+            </p>
+
+            @if (compraCreada()) {
+              <div class="alert alert-success">
+                <i class="fa-solid fa-circle-check me-2"></i>
+                Tu compra quedó registrada y está <strong>pendiente de pago</strong>.
+              </div>
+              <a routerLink="/catalogo" class="btn btn-outline-primary w-100">
+                <i class="fa-solid fa-store me-2"></i>Seguir comprando
+              </a>
+            } @else {
+              <form [formGroup]="compraForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                  <label class="form-label">Cantidad</label>
+                  <input type="number" min="1" formControlName="cantidad" class="form-control" />
+                  @if (compraForm.get('cantidad')?.invalid && compraForm.get('cantidad')?.touched) {
+                    <div class="text-danger small mt-1">La cantidad debe ser mínimo 1.</div>
+                  }
+                </div>
+
+                <p class="h5 mb-3">
+                  Total: {{ j.precio.precioProducto * compraForm.controls.cantidad.value | number:'1.0-0' }} COP
+                </p>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary"
+                          [disabled]="compraForm.invalid || isLoading()">
+                    @if (isLoading()) {
+                      <span class="spinner-border spinner-border-sm me-2"></span>Comprando...
+                    } @else {
+                      <i class="fa-solid fa-cart-shopping me-2"></i>Confirmar compra
+                    }
+                  </button>
+                </div>
+              </form>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="text-center py-5 text-muted">
+          <i class="fa-solid fa-dice fa-3x mb-3"></i>
+          <p class="h5">Primero elige un juego en el catálogo.</p>
+          <a routerLink="/catalogo" class="btn btn-primary mt-2">
+            <i class="fa-solid fa-store me-2"></i>Ir al catálogo
+          </a>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>
