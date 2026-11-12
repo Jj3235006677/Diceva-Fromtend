@@ -1,19 +1,25 @@
 import { inject } from '@angular/core';
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 import { Auth } from '../servicios/auth';
 
-// Agrega el token a todas las peticiones que salen hacia el backend
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(Auth).getToken();
+  const auth = inject(Auth);
+  const router = inject(Router);
+  const token = auth.getToken();
 
-  if (token) {
-    const peticionConToken = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
+  const peticion = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
+
+  return next(peticion).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401 && token) {
+        auth.logout();
+        router.navigate(['/login']);
       }
-    });
-    return next(peticionConToken);
-  }
-
-  return next(req);
+      return throwError(() => error);
+    })
+  );
 };
