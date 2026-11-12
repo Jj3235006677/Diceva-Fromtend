@@ -6,13 +6,11 @@
   </div>
 
   @if (juegos().length === 0) {
-    <!-- Cuando no hay juegos -->
     <div class="text-center py-5 text-muted">
       <i class="fa-solid fa-box-open fa-3x mb-3"></i>
       <p class="h5">Todavía no hay juegos publicados.</p>
     </div>
   } @else {
-    <!-- Una ficha por juego -->
     <div class="row g-3">
       @for (juego of juegos(); track juego.id) {
         <div class="col-md-6 col-lg-4">
@@ -57,6 +55,20 @@
           </div>
         </div>
       }
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center gap-3 my-4">
+      <button type="button" class="btn btn-outline-primary"
+              (click)="anterior()" [disabled]="pagina() === 0">
+        <i class="fa-solid fa-chevron-left me-1"></i>Anterior
+      </button>
+
+      <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+
+      <button type="button" class="btn btn-outline-primary"
+              (click)="siguiente()" [disabled]="pagina() >= totalPaginas() - 1">
+        Siguiente<i class="fa-solid fa-chevron-right ms-1"></i>
+      </button>
     </div>
   }
 </div>

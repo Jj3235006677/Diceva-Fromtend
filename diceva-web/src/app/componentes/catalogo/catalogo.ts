@@ -1,12 +1,10 @@
-
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { JuegosService } from '../../servicios/JuegosMesa';
 import { EstadoJuego, JuegoMesa } from '../../modelos/juegoMesa';
- 
+
 @Component({
   imports: [DecimalPipe, RouterLink],
   selector: 'app-catalogo',
@@ -15,13 +13,40 @@ import { EstadoJuego, JuegoMesa } from '../../modelos/juegoMesa';
 })
 export class Catalogo {
   private juegosService = inject(JuegosService);
- 
-  juegos = toSignal(
-    this.juegosService.listar().pipe(map((pagina) => pagina.contenido)),
-    { initialValue: [] as JuegoMesa[] }
-  );
- 
-  // Color de la etiqueta según el estado del juego
+  private destroyRef = inject(DestroyRef);
+
+  juegos = signal<JuegoMesa[]>([]);
+  pagina = signal(0);
+  totalPaginas = signal(0);
+  private tamanio = 4;
+
+  constructor() {
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.juegosService.listar('', this.pagina(), this.tamanio)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(resultado => {
+        this.juegos.set(resultado.contenido);
+        this.totalPaginas.set(resultado.totalPaginas);
+      });
+  }
+
+  anterior(): void {
+    if (this.pagina() > 0) {
+      this.pagina.update(p => p - 1);
+      this.cargar();
+    }
+  }
+
+  siguiente(): void {
+    if (this.pagina() < this.totalPaginas() - 1) {
+      this.pagina.update(p => p + 1);
+      this.cargar();
+    }
+  }
+
   badgeEstado(estado: EstadoJuego): string {
     switch (estado) {
       case 'DISPONIBLE': return 'text-bg-success';
@@ -30,11 +55,9 @@ export class Catalogo {
       default:           return 'text-bg-light';
     }
   }
- 
-  // Si la foto no carga, muestra una imagen de reemplazo
+
   imagenRota(evento: Event): void {
     const img = evento.target as HTMLImageElement;
     img.src = 'https://placehold.co/400x250?text=DICEVA';
   }
 }
- 
