@@ -1,0 +1,16 @@
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  @for (aviso of avisosService.avisos(); track aviso.id) {
+    <div class="alert shadow-sm d-flex align-items-center mb-2"
+         [class.alert-success]="aviso.tipo === 'exito'"
+         [class.alert-danger]="aviso.tipo === 'error'"
+         [class.alert-info]="aviso.tipo === 'info'">
+      <i class="fa-solid me-2"
+         [class.fa-circle-check]="aviso.tipo === 'exito'"
+         [class.fa-circle-exclamation]="aviso.tipo === 'error'"
+         [class.fa-circle-info]="aviso.tipo === 'info'"></i>
+      <span class="me-3">{{ aviso.mensaje }}</span>
+      <button type="button" class="btn-close ms-auto"
+              (click)="avisosService.cerrar(aviso.id)"></button>
+    </div>
+  }
+</div>
