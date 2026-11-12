@@ -18,6 +18,7 @@ export class Catalogo {
   juegos = signal<JuegoMesa[]>([]);
   pagina = signal(0);
   totalPaginas = signal(0);
+  texto = signal('');
   private tamanio = 4;
 
   constructor() {
@@ -25,12 +26,18 @@ export class Catalogo {
   }
 
   cargar(): void {
-    this.juegosService.listar('', this.pagina(), this.tamanio)
+    this.juegosService.listar(this.texto(), this.pagina(), this.tamanio)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(resultado => {
         this.juegos.set(resultado.contenido);
         this.totalPaginas.set(resultado.totalPaginas);
       });
+  }
+
+  buscar(valor: string): void {
+    this.texto.set(valor.trim());
+    this.pagina.set(0);
+    this.cargar();
   }
 
   anterior(): void {

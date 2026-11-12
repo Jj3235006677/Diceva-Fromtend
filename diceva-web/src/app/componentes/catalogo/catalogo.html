@@ -5,10 +5,26 @@
     </h1>
   </div>
 
+  <div class="input-group mb-4">
+    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+    <input #busqueda type="text" class="form-control"
+           placeholder="Buscar juego por nombre..."
+           (keyup.enter)="buscar(busqueda.value)" />
+    <button type="button" class="btn btn-primary" (click)="buscar(busqueda.value)">
+      Buscar
+    </button>
+  </div>
+
   @if (juegos().length === 0) {
     <div class="text-center py-5 text-muted">
-      <i class="fa-solid fa-box-open fa-3x mb-3"></i>
-      <p class="h5">Todavía no hay juegos publicados.</p>
+      @if (texto()) {
+        <i class="fa-solid fa-magnifying-glass fa-3x mb-3"></i>
+        <p class="h5">No encontramos juegos con "{{ texto() }}".</p>
+        <p>Prueba con otro nombre.</p>
+      } @else {
+        <i class="fa-solid fa-box-open fa-3x mb-3"></i>
+        <p class="h5">Todavía no hay juegos publicados.</p>
+      }
     </div>
   } @else {
     <div class="row g-3">
