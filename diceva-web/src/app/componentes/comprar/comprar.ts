@@ -1,14 +1,16 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { map, switchMap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, of, switchMap, tap } from 'rxjs';
 import { ComprasService } from '../../servicios/compras';
 import { JuegosService } from '../../servicios/JuegosMesa';
+import { CuponesService } from '../../servicios/cupones';
 import { AvisosService } from '../../servicios/avisos';
 import { JuegoMesa } from '../../modelos/juegoMesa';
 import { CompraResponse } from '../../modelos/compras';
+import { CuponResponse } from '../../modelos/cupones';
 
 @Component({
   selector: 'app-comprar',
@@ -19,6 +21,7 @@ import { CompraResponse } from '../../modelos/compras';
 export class Comprar {
   private comprasService = inject(ComprasService);
   private juegosService = inject(JuegosService);
+  private cuponesService = inject(CuponesService);
   private avisos = inject(AvisosService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
@@ -27,8 +30,22 @@ export class Comprar {
   compraCreada = signal<CompraResponse | null>(null);
   isLoading = signal(false);
 
+  cupon = signal<CuponResponse | null>(null);
+  errorCupon = signal('');
+  verificandoCupon = signal(false);
+
   compraForm = inject(FormBuilder).nonNullable.group({
-    cantidad: [1, [Validators.required, Validators.min(1)]]
+    cantidad: [1, [Validators.required, Validators.min(1)]],
+    cupon: ['']
+  });
+
+  private cantidad = toSignal(this.compraForm.controls.cantidad.valueChanges, { initialValue: 1 });
+
+  subtotal = computed(() => (this.juego()?.precio.precioProducto ?? 0) * (this.cantidad() || 0));
+
+  total = computed(() => {
+    const c = this.cupon();
+    return c ? Math.floor(this.subtotal() * (100 - c.porcentaje) / 100) : this.subtotal();
   });
 
   constructor() {
@@ -41,6 +58,34 @@ export class Comprar {
           error: () => this.avisos.error('Ese juego no existe.')
         });
     }
+
+    this.compraForm.controls.cupon.valueChanges
+      .pipe(
+        map(valor => valor.trim()),
+        tap(() => {
+          this.cupon.set(null);
+          this.errorCupon.set('');
+        }),
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap(codigo => {
+          if (!codigo) {
+            return of(null);
+          }
+          this.verificandoCupon.set(true);
+          return this.cuponesService.consultar(codigo).pipe(
+            catchError(err => {
+              this.errorCupon.set(err.error?.mensaje ?? 'Ese cupón no es válido.');
+              return of(null);
+            })
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(cupon => {
+        this.cupon.set(cupon);
+        this.verificandoCupon.set(false);
+      });
   }
 
   onSubmit(): void {
@@ -48,13 +93,16 @@ export class Comprar {
     if (!juego || this.compraForm.invalid) return;
 
     const cantidad = this.compraForm.getRawValue().cantidad;
+    const cuponValido = this.cupon();
     this.isLoading.set(true);
 
     this.comprasService.crear()
       .pipe(
         switchMap((compra) =>
           this.comprasService.agregarJuego(compra.id, juego.id, cantidad)
-            .pipe(map(() => compra))
+            .pipe(switchMap(() => cuponValido
+              ? this.comprasService.aplicarCupon(compra.id, cuponValido.codigo)
+              : this.comprasService.obtenerPorId(compra.id)))
         ),
         takeUntilDestroyed(this.destroyRef)
       )
@@ -65,17 +113,22 @@ export class Comprar {
           this.isLoading.set(false);
         },
         error: (err) => {
-          if (err.status === 400) {
-            this.avisos.error(err.error?.mensaje ?? 'Revisa los datos de la compra.');
-          } else if (err.status === 404) {
-            this.avisos.error('Ese juego no existe.');
-          } else if (err.status === 401 || err.status === 403) {
-            this.avisos.error('Inicia sesión para poder comprar.');
-          } else {
-            this.avisos.error('Ocurrió un error. Intenta de nuevo más tarde.');
-          }
+          this.avisos.error(this.traducirError(err));
           this.isLoading.set(false);
         }
       });
+  }
+
+  private traducirError(err: any): string {
+    if (err.status === 400) {
+      return err.error?.mensaje ?? 'Revisa los datos e intenta de nuevo.';
+    }
+    if (err.status === 404) {
+      return 'No encontramos lo que buscabas.';
+    }
+    if (err.status === 401 || err.status === 403) {
+      return 'Inicia sesión para poder comprar.';
+    }
+    return 'Ocurrió un error. Intenta de nuevo más tarde.';
   }
 }

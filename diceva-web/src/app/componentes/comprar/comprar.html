@@ -20,11 +20,32 @@
               <i class="fa-solid fa-box me-1"></i>{{ j.stock }} disponibles
             </p>
 
-            @if (compraCreada()) {
+            @if (compraCreada(); as c) {
               <div class="alert alert-success">
                 <i class="fa-solid fa-circle-check me-2"></i>
                 Tu compra quedó registrada y está <strong>pendiente de pago</strong>.
               </div>
+
+              <ul class="list-group mb-3">
+                <li class="list-group-item d-flex justify-content-between">
+                  <span>Subtotal</span>
+                  <span>{{ c.precioTotal.precioProducto | number:'1.0-0' }} COP</span>
+                </li>
+                @if (c.codigoCupon) {
+                  <li class="list-group-item d-flex justify-content-between text-success">
+                    <span>
+                      <i class="fa-solid fa-ticket me-1"></i>
+                      Cupón {{ c.codigoCupon }} (-{{ c.porcentajeDescuento }}%)
+                    </span>
+                    <span>-{{ (c.precioTotal.precioProducto - c.totalAPagar.precioProducto) | number:'1.0-0' }} COP</span>
+                  </li>
+                }
+                <li class="list-group-item d-flex justify-content-between fw-bold">
+                  <span>Total a pagar</span>
+                  <span>{{ c.totalAPagar.precioProducto | number:'1.0-0' }} COP</span>
+                </li>
+              </ul>
+
               <a routerLink="/catalogo" class="btn btn-outline-primary w-100">
                 <i class="fa-solid fa-store me-2"></i>Seguir comprando
               </a>
@@ -38,13 +59,42 @@
                   }
                 </div>
 
-                <p class="h5 mb-3">
-                  Total: {{ j.precio.precioProducto * compraForm.controls.cantidad.value | number:'1.0-0' }} COP
-                </p>
+                <div class="mb-3">
+                  <label class="form-label">
+                    ¿Tienes un cupón de descuento? <span class="text-muted small">(opcional)</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-ticket"></i></span>
+                    <input type="text" formControlName="cupon" class="form-control text-uppercase"
+                           [class.is-valid]="cupon()" [class.is-invalid]="errorCupon()"
+                           placeholder="Ej: DICEVA10" />
+                    @if (verificandoCupon()) {
+                      <span class="input-group-text"><span class="spinner-border spinner-border-sm"></span></span>
+                    }
+                  </div>
+                  @if (cupon(); as cp) {
+                    <div class="text-success small mt-1">
+                      <i class="fa-solid fa-circle-check me-1"></i>
+                      Cupón {{ cp.codigo }} aplicado: -{{ cp.porcentaje }}%
+                    </div>
+                  }
+                  @if (errorCupon()) {
+                    <div class="text-danger small mt-1">
+                      <i class="fa-solid fa-circle-xmark me-1"></i>{{ errorCupon() }}
+                    </div>
+                  }
+                </div>
+
+                <div class="mb-3">
+                  @if (cupon()) {
+                    <p class="text-muted mb-0"><s>{{ subtotal() | number:'1.0-0' }} COP</s></p>
+                  }
+                  <p class="h5 mb-0">Total: {{ total() | number:'1.0-0' }} COP</p>
+                </div>
 
                 <div class="d-grid">
                   <button type="submit" class="btn btn-primary"
-                          [disabled]="compraForm.invalid || isLoading()">
+                          [disabled]="compraForm.invalid || isLoading() || verificandoCupon()">
                     @if (isLoading()) {
                       <span class="spinner-border spinner-border-sm me-2"></span>Comprando...
                     } @else {

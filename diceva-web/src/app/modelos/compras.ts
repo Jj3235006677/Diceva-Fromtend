@@ -10,23 +10,15 @@ export interface DetalleCompra {
   precioUnitario: Precio;
 }
 
-// Espejo de RealizarCompraRequest
-export interface RealizarCompraRequest {
-  cedulaUsuario: string;
-}
-
 // Espejo de CompraResponse
 export interface CompraResponse {
- 
- 
- 
   id: string;
   detalles: DetalleCompra[];
   cedulaUsuario: string;
   precioTotal: Precio;
   fechaCompra: string;
-  
-  
-  
   estadoPago: EstadoPago;
+  codigoCupon: string | null;
+  porcentajeDescuento: number;
+  totalAPagar: Precio;
 }
