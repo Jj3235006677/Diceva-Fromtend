@@ -1,0 +1,191 @@
+.ranking {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #FAEEDA;
+  color: #633806;
+}
+
+.podio {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.columna {
+  flex: 1;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lugar-1 { order: 2; }
+.lugar-2 { order: 1; }
+.lugar-3 { order: 3; }
+
+.corona {
+  font-size: 1.6rem;
+  color: #BA7517;
+  margin-bottom: 4px;
+  animation: corona 2s ease-in-out infinite;
+}
+
+.espacio-corona {
+  height: 32px;
+}
+
+.juego {
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  animation: aparecer 0.5s ease-out forwards;
+}
+
+.lugar-1 .juego { animation-delay: 0.6s; }
+.lugar-2 .juego { animation-delay: 0.72s; }
+.lugar-3 .juego { animation-delay: 0.84s; }
+
+.portada {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 8px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+}
+
+.medalla {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lugar-1 .medalla { background: #BA7517; }
+.lugar-2 .medalla { background: #888780; }
+.lugar-3 .medalla { background: #993C1D; }
+
+.nombre {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  margin: 8px 0 0;
+  min-height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vendidos {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin: 0 0 10px;
+}
+
+.escalon {
+  width: 100%;
+  border-radius: 14px 14px 0 0;
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+  font-size: 2rem;
+  font-weight: 700;
+  transform-origin: bottom;
+  animation: subir 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.lugar-1 .escalon { height: 130px; background: #FAC775; color: #633806; animation-delay: 0.15s; }
+.lugar-2 .escalon { height: 95px;  background: #D3D1C7; color: #444441; animation-delay: 0.27s; }
+.lugar-3 .escalon { height: 70px;  background: #F5C4B3; color: #712B13; animation-delay: 0.39s; }
+
+.resto {
+  border: 1px solid #dee2e6;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #dee2e6;
+  opacity: 0;
+  animation: aparecer 0.4s ease-out forwards;
+}
+
+.fila:last-child {
+  border-bottom: none;
+}
+
+.puesto {
+  width: 18px;
+  font-weight: 700;
+  color: #adb5bd;
+}
+
+.mini {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.barra {
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: #f1f3f5;
+  overflow: hidden;
+}
+
+.barra span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  animation: llenar 0.8s ease-out both;
+}
+
+@keyframes subir {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes corona {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50%      { transform: translateY(-4px) rotate(6deg); }
+}
+
+@keyframes llenar {
+  from { width: 0; }
+}

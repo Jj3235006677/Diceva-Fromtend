@@ -39,3 +39,10 @@ export interface ResultadoPaginado<T> {
   paginaActual: number;
   tamanioPagina: number;
 }
+
+
+// Espejo de RankingJuegoResponse
+export interface RankingJuego {
+  nombre: string;
+  cantidad: number;
+}
