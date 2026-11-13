@@ -1,0 +1,116 @@
+<section class="dados-seccion mb-5">
+  <div class="mesa">
+
+    @for (c of confeti(); track $index) {
+      <span class="confeti"
+            [style.left.%]="c.izquierda"
+            [style.background]="c.color"
+            [style.animation-delay]="c.retraso + 's'"></span>
+    }
+
+    <div class="zona-dados">
+      <div class="dado" [class.tirando]="animando()" [class.asentando]="asentando()">
+        <div class="vuelo">
+          <div class="escena">
+            <div class="cubo" [style.transform]="dado1()">
+              @for (cara of caras; track cara) {
+                <div [class]="'cara cara-' + cara">
+                  @for (casilla of casillas; track casilla) {
+                    <span [class.punto]="tienePunto(cara, casilla)"></span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="sombra"></div>
+      </div>
+
+      <div class="dado dado-2" [class.tirando]="animando()" [class.asentando]="asentando()">
+        <div class="vuelo">
+          <div class="escena">
+            <div class="cubo cubo-2" [style.transform]="dado2()">
+              @for (cara of caras; track cara) {
+                <div [class]="'cara cara-' + cara">
+                  @for (casilla of casillas; track casilla) {
+                    <span [class.punto]="tienePunto(cara, casilla)"></span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="sombra"></div>
+      </div>
+    </div>
+
+    <h2 class="titulo">¿No sabes qué jugar?</h2>
+    <p class="subtitulo">Dinos cuántos son y deja que los dados decidan.</p>
+
+    <div class="selector">
+      <button type="button" class="paso" aria-label="Menos jugadores"
+              (click)="cambiarJugadores(-1)" [disabled]="lanzando()">−</button>
+      <div class="cantidad">
+        <span class="numero">{{ jugadores() }}</span>
+        <span class="etiqueta">jugadores</span>
+      </div>
+      <button type="button" class="paso" aria-label="Más jugadores"
+              (click)="cambiarJugadores(1)" [disabled]="lanzando()">+</button>
+    </div>
+
+    <div class="personas">
+      @for (p of personas; track p) {
+        <i class="fa-solid fa-user"></i>
+      }
+      @if (jugadores() > 8) {
+        <span>+{{ jugadores() - 8 }}</span>
+      }
+    </div>
+
+    <button type="button" class="btn-lanzar" (click)="lanzar()" [disabled]="lanzando()">
+      <i class="fa-solid fa-dice me-2"></i>
+      {{ juegos().length > 0 ? 'Lanzar otra vez' : 'Lanzar los dados' }}
+    </button>
+
+    @if (error()) {
+      <div class="mensaje-error">
+        <i class="fa-regular fa-face-frown me-2"></i>{{ error() }}
+      </div>
+    }
+
+    @if (juegos().length > 0) {
+      <div class="cartas" [style.grid-template-columns]="'repeat(' + juegos().length + ', minmax(0, 1fr))'">
+        @for (juego of juegos(); track juego.id; let i = $index) {
+          <div class="carta" [class.volteada]="i < volteadas()">
+
+            <div class="lado dorso">
+              <i class="fa-solid fa-dice"></i>
+            </div>
+
+            <div class="lado frente">
+              <div class="portada"
+                   [style.background]="estilo(juego.nombre).fondo"
+                   [style.color]="estilo(juego.nombre).color">
+                <span class="numero-carta" [style.color]="estilo(juego.nombre).color">#{{ i + 1 }}</span>
+                <i [class]="'fa-solid ' + estilo(juego.nombre).icono"></i>
+              </div>
+              <div class="info">
+                <p class="nombre">{{ juego.nombre }}</p>
+                <p class="detalle">
+                  <i class="fa-solid fa-users me-1"></i>
+                  {{ juego.rangoJugadores.minimoJugadores }}-{{ juego.rangoJugadores.maximoJugadores }}
+                </p>
+                <p class="precio">${{ juego.precio.precioProducto | number:'1.0-0' }}</p>
+                <a routerLink="/comprar" [queryParams]="{ juego: juego.id }" class="btn-comprar">
+                  <i class="fa-solid fa-cart-shopping me-1"></i>Comprar
+                </a>
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</section>

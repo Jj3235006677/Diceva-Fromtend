@@ -5,87 +5,101 @@
     </h1>
   </div>
 
-  <div class="input-group mb-4">
-    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-    <input #busqueda type="text" class="form-control"
-           placeholder="Buscar juego por nombre..."
-           (keyup.enter)="buscar(busqueda.value)" />
-    <button type="button" class="btn btn-primary" (click)="buscar(busqueda.value)">
-      Buscar
-    </button>
-  </div>
+  <div class="row g-4">
 
-  @if (juegos().length === 0) {
-    <div class="text-center py-5 text-muted">
-      @if (texto()) {
-        <i class="fa-solid fa-magnifying-glass fa-3x mb-3"></i>
-        <p class="h5">No encontramos juegos con "{{ texto() }}".</p>
-        <p>Prueba con otro nombre.</p>
+    <!-- Columna principal: buscador, juegos y paginación -->
+    <div class="col-lg-8">
+      <div class="input-group mb-4">
+        <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input #busqueda type="text" class="form-control"
+               placeholder="Buscar juego por nombre..."
+               [value]="texto()"
+               (keyup.enter)="buscar(busqueda.value)" />
+        <button type="button" class="btn btn-primary" (click)="buscar(busqueda.value)">
+          Buscar
+        </button>
+      </div>
+
+      @if (juegos().length === 0) {
+        <div class="text-center py-5 text-muted">
+          @if (texto()) {
+            <i class="fa-solid fa-magnifying-glass fa-3x mb-3"></i>
+            <p class="h5">No encontramos juegos con "{{ texto() }}".</p>
+            <p>Prueba con otro nombre.</p>
+          } @else {
+            <i class="fa-solid fa-box-open fa-3x mb-3"></i>
+            <p class="h5">Todavía no hay juegos publicados.</p>
+          }
+        </div>
       } @else {
-        <i class="fa-solid fa-box-open fa-3x mb-3"></i>
-        <p class="h5">Todavía no hay juegos publicados.</p>
-      }
-    </div>
-  } @else {
-    <div class="row g-3">
-      @for (juego of juegos(); track juego.id) {
-        <div class="col-md-6 col-lg-4">
-          <div class="card h-100 juego-card" [class.agotado]="juego.stock === 0">
+        <div class="row g-3">
+          @for (juego of juegos(); track juego.id) {
+            <div class="col-md-6">
+              <div class="card h-100 juego-card" [class.agotado]="juego.stock === 0">
 
-            <img [src]="juego.imagenUrl" [alt]="juego.nombre"
-                 class="card-img-top juego-img"
-                 (error)="imagenRota($event)" />
+                <img [src]="juego.imagenUrl" [alt]="juego.nombre"
+                     class="card-img-top juego-img"
+                     (error)="imagenRota($event)" />
 
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="fw-semibold">{{ juego.nombre }}</span>
-              <span class="badge {{ badgeEstado(juego.estado) }}">
-                {{ juego.estado }}
-              </span>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <span class="fw-semibold">{{ juego.nombre }}</span>
+                  <span class="badge {{ badgeEstado(juego.estado) }}">
+                    {{ juego.estado }}
+                  </span>
+                </div>
+
+                <div class="card-body">
+                  <p class="small text-muted mb-2">{{ juego.descripcion }}</p>
+                  <p class="mb-2">
+                    <i class="fa-solid fa-tag me-1"></i>
+                    {{ juego.precio.precioProducto | number:'1.0-0' }} COP
+                  </p>
+                  <p class="text-muted small mb-0">
+                    <i class="fa-solid fa-users me-1"></i>
+                    {{ juego.rangoJugadores.minimoJugadores }}-{{ juego.rangoJugadores.maximoJugadores }} jugadores
+                    · {{ juego.edadRecomendada }}+ años
+                  </p>
+                  <p class="small mb-0 mt-2">
+                    @if (juego.stock > 0) {
+                      <i class="fa-solid fa-circle-check text-success me-1"></i>{{ juego.stock }} disponibles
+                    } @else {
+                      <i class="fa-solid fa-circle-xmark text-danger me-1"></i>Agotado
+                    }
+                  </p>
+                </div>
+
+                <div class="card-footer text-end">
+                  <a routerLink="/comprar" [queryParams]="{ juego: juego.id }"
+                     class="btn btn-sm btn-primary" [class.disabled]="juego.stock === 0">
+                    <i class="fa-solid fa-cart-shopping me-1"></i>Comprar
+                  </a>
+                </div>
+              </div>
             </div>
+          }
+        </div>
 
-            <div class="card-body">
-              <p class="small text-muted mb-2">{{ juego.descripcion }}</p>
-              <p class="mb-2">
-                <i class="fa-solid fa-tag me-1"></i>
-                {{ juego.precio.precioProducto | number:'1.0-0' }} COP
-              </p>
-              <p class="text-muted small mb-0">
-                <i class="fa-solid fa-users me-1"></i>
-                {{ juego.rangoJugadores.minimoJugadores }}-{{ juego.rangoJugadores.maximoJugadores }} jugadores
-                · {{ juego.edadRecomendada }}+ años
-              </p>
-              <p class="small mb-0 mt-2">
-                @if (juego.stock > 0) {
-                  <i class="fa-solid fa-circle-check text-success me-1"></i>{{ juego.stock }} disponibles
-                } @else {
-                  <i class="fa-solid fa-circle-xmark text-danger me-1"></i>Agotado
-                }
-              </p>
-            </div>
+        <div class="d-flex justify-content-center align-items-center gap-3 my-4">
+          <button type="button" class="btn btn-outline-primary"
+                  (click)="anterior()" [disabled]="pagina() === 0">
+            <i class="fa-solid fa-chevron-left me-1"></i>Anterior
+          </button>
 
-            <div class="card-footer text-end">
-              <a routerLink="/comprar" [queryParams]="{ juego: juego.id }"
-   class="btn btn-sm btn-primary" [class.disabled]="juego.stock === 0">
-                <i class="fa-solid fa-cart-shopping me-1"></i>Comprar
-              </a>
-            </div>
-          </div>
+          <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+
+          <button type="button" class="btn btn-outline-primary"
+                  (click)="siguiente()" [disabled]="pagina() >= totalPaginas() - 1">
+            Siguiente<i class="fa-solid fa-chevron-right ms-1"></i>
+          </button>
         </div>
       }
     </div>
 
-    <div class="d-flex justify-content-center align-items-center gap-3 my-4">
-      <button type="button" class="btn btn-outline-primary"
-              (click)="anterior()" [disabled]="pagina() === 0">
-        <i class="fa-solid fa-chevron-left me-1"></i>Anterior
-      </button>
+    <!-- Barra lateral: los dados y los más vendidos -->
+    <aside class="col-lg-4">
+      <app-lanza-dados />
+      <app-mas-vendidos (elegir)="buscar($event)" />
+    </aside>
 
-      <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
-
-      <button type="button" class="btn btn-outline-primary"
-              (click)="siguiente()" [disabled]="pagina() >= totalPaginas() - 1">
-        Siguiente<i class="fa-solid fa-chevron-right ms-1"></i>
-      </button>
-    </div>
-  }
+  </div>
 </div>

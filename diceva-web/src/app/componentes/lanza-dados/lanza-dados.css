@@ -1,0 +1,331 @@
+.dados-seccion {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ---------- La mesa ---------- */
+.mesa {
+  position: relative;
+  overflow: hidden;
+  background: #185FA5;
+  border: 7px solid #0C447C;
+  border-radius: 20px;
+  padding: 1.5rem 1rem 1.25rem;
+  text-align: center;
+}
+
+.titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.subtitulo {
+  color: #B5D4F4;
+  margin: 0.3rem 0 1rem;
+}
+
+/* ---------- Los dados ---------- */
+.zona-dados {
+  height: 112px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 0.6rem;
+}
+
+.dado {
+  width: 62px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.escena {
+  width: 58px;
+  height: 58px;
+  perspective: 420px;
+}
+
+.cubo {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  transform-style: preserve-3d;
+  transition: transform 1.35s cubic-bezier(0.15, 0.75, 0.3, 1);
+}
+
+.cara {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  padding: 8px;
+  background: #FFFFFF;
+  border: 2px solid #D3D1C7;
+  border-radius: 12px;
+  backface-visibility: hidden;
+}
+
+.cara span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  align-self: center;
+  justify-self: center;
+}
+
+.cara span.punto { background: #2C2C2A; }
+
+.cubo-2 .cara {
+  background: #E6F1FB;
+  border-color: #85B7EB;
+}
+
+.cubo-2 .cara span.punto { background: #185FA5; }
+
+.cara-1 { transform: translateZ(29px); }
+.cara-6 { transform: rotateY(180deg) translateZ(29px); }
+.cara-3 { transform: rotateY(90deg) translateZ(29px); }
+.cara-4 { transform: rotateY(-90deg) translateZ(29px); }
+.cara-5 { transform: rotateX(90deg) translateZ(29px); }
+.cara-2 { transform: rotateX(-90deg) translateZ(29px); }
+
+.sombra {
+  width: 50px;
+  height: 9px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: #0C447C;
+  opacity: 0.7;
+}
+
+.tirando .vuelo   { animation: tiro 1.35s cubic-bezier(0.33, 0.66, 0.52, 1) both; }
+.tirando .sombra  { animation: sombra-tiro 1.35s cubic-bezier(0.33, 0.66, 0.52, 1) both; }
+.dado-2.tirando .vuelo,
+.dado-2.tirando .sombra { animation-delay: 0.14s; }
+.asentando .escena { animation: bamboleo 0.45s ease-out; }
+
+/* ---------- Selector de jugadores ---------- */
+.selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.paso {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  background: transparent;
+  color: #FFFFFF;
+  border: 1.5px solid #B5D4F4;
+}
+
+.paso:hover:not(:disabled) { background: #0C447C; }
+.paso:disabled { opacity: 0.5; }
+
+.cantidad {
+  min-width: 96px;
+  color: #FFFFFF;
+}
+
+.numero {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.etiqueta {
+  font-size: 0.8rem;
+  color: #B5D4F4;
+}
+
+.personas {
+  min-height: 26px;
+  margin-bottom: 1rem;
+  color: #B5D4F4;
+  letter-spacing: 3px;
+}
+
+/* ---------- Botón de lanzar ---------- */
+.btn-lanzar {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #0C447C;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btn-lanzar:hover:not(:disabled) { background: #E6F1FB; }
+.btn-lanzar:active:not(:disabled) { transform: scale(0.97); }
+.btn-lanzar:disabled { opacity: 0.7; }
+
+.mensaje-error {
+  margin-top: 1rem;
+  padding: 12px;
+  border-radius: 12px;
+  background: #FFFFFF;
+  color: #444441;
+  font-size: 0.9rem;
+}
+
+/* ---------- Las cartas ---------- */
+.cartas {
+  display: grid;
+  gap: 8px;
+  margin-top: 1.1rem;
+  perspective: 800px;
+}
+
+.carta {
+  position: relative;
+  height: 200px;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  transition: transform 0.7s ease;
+}
+
+.carta.volteada { transform: rotateY(0); }
+
+.lado {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+.dorso {
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0C447C;
+  border: 3px solid #85B7EB;
+  color: #85B7EB;
+  font-size: 2rem;
+}
+
+.frente {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  background: #FFFFFF;
+  border: 2px solid #D3D1C7;
+}
+
+.portada {
+  position: relative;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.numero-carta {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #FFFFFF;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+.nombre {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #2C2C2A;
+}
+
+.detalle {
+  margin: 3px 0 0;
+  font-size: 0.75rem;
+  color: #5F5E5A;
+}
+
+.precio {
+  margin: auto 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2C2C2A;
+}
+
+.btn-comprar {
+  display: block;
+  padding: 5px 0;
+  border-radius: 999px;
+  background: #185FA5;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-comprar:hover { background: #0C447C; color: #FFFFFF; }
+
+/* ---------- Confeti ---------- */
+.confeti {
+  position: absolute;
+  top: -14px;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  animation: caer 1.6s ease-in forwards;
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes tiro {
+  0%       { transform: translate(-190px, -70px); }
+  22%      { transform: translate(-70px, 0); }
+  36%      { transform: translate(-38px, -30px); }
+  50%      { transform: translate(-16px, 0); }
+  61%      { transform: translate(-7px, -12px); }
+  72%      { transform: translate(-2px, 0); }
+  80%      { transform: translate(0, -4px); }
+  88%, 100% { transform: translate(0, 0); }
+}
+
+@keyframes sombra-tiro {
+  0%       { transform: translateX(-190px) scale(0.35); }
+  22%      { transform: translateX(-70px) scale(1); }
+  36%      { transform: translateX(-38px) scale(0.65); }
+  50%      { transform: translateX(-16px) scale(1); }
+  61%      { transform: translateX(-7px) scale(0.82); }
+  72%, 100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes bamboleo {
+  0%, 100% { transform: rotate(0); }
+  30%      { transform: rotate(-7deg); }
+  60%      { transform: rotate(4deg); }
+  80%      { transform: rotate(-2deg); }
+}
+
+@keyframes caer {
+  to { transform: translateY(360px) rotate(540deg); opacity: 0; }
+}

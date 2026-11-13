@@ -26,4 +26,14 @@ export class JuegosService {
   ranking() {
     return this.http.get<RankingJuego[]>(`${this.url}/ranking`);
   }
+
+  aleatorio(jugadores: number, excluir: string[] = []) {
+    let params = new HttpParams().set('jugadores', jugadores);
+
+    if (excluir.length > 0) {
+      params = params.set('excluir', excluir.join(','));
+    }
+
+    return this.http.get<JuegoMesa[]>(`${this.url}/aleatorio`, { params });
+  }
 }

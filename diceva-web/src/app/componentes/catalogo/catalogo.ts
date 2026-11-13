@@ -4,9 +4,11 @@ import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { JuegosService } from '../../servicios/JuegosMesa';
 import { EstadoJuego, JuegoMesa } from '../../modelos/juegoMesa';
+import { MasVendidos } from '../mas-vendidos/mas-vendidos';
+import { LanzaDados } from '../lanza-dados/lanza-dados';
 
 @Component({
-  imports: [DecimalPipe, RouterLink],
+  imports: [DecimalPipe, RouterLink, MasVendidos, LanzaDados],
   selector: 'app-catalogo',
   styleUrl: './catalogo.css',
   templateUrl: './catalogo.html',

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { JuegosService } from '../../servicios/JuegosMesa';
 import { RankingJuego } from '../../modelos/juegoMesa';
+import { LanzaDados } from '../lanza-dados/lanza-dados';
 
 interface EstiloJuego {
   fondo: string;
@@ -24,7 +25,7 @@ const ESTILOS: Record<string, EstiloJuego> = {
 const ESTILO_POR_DEFECTO: EstiloJuego = { fondo: '#E6F1FB', color: '#0C447C', icono: 'fa-dice' };
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, LanzaDados],
   selector: 'app-incio',
   styleUrl: './incio.css',
   templateUrl: './incio.html',

@@ -1,0 +1,28 @@
+@if (top().length > 0) {
+  <section class="mas-vendidos mb-4">
+    <div class="encabezado">
+      <h2 class="titulo">
+        <i class="fa-solid fa-fire me-2"></i>Los más vendidos
+      </h2>
+      <span class="ayuda">Toca uno para verlo</span>
+    </div>
+
+    <div class="lista">
+      @for (juego of top(); track juego.nombre; let i = $index) {
+        <button type="button" class="fila" (click)="elegir.emit(juego.nombre)">
+          <span [class]="'medalla puesto-' + (i + 1)">{{ i + 1 }}</span>
+          <div class="portada"
+               [style.background]="estilo(juego.nombre).fondo"
+               [style.color]="estilo(juego.nombre).color">
+            <i [class]="'fa-solid ' + estilo(juego.nombre).icono"></i>
+          </div>
+          <div class="texto">
+            <span class="nombre">{{ juego.nombre }}</span>
+            <span class="vendidos">{{ juego.cantidad }} vendidos</span>
+          </div>
+          <i class="fa-solid fa-chevron-right flecha"></i>
+        </button>
+      }
+    </div>
+  </section>
+}
