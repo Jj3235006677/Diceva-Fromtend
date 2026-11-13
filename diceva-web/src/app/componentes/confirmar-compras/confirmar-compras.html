@@ -1,0 +1,78 @@
+<div class="container mt-4 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+      <i class="fa-solid fa-clipboard-check me-2 text-primary"></i>Confirmar compras
+    </h1>
+    <span class="en-vivo"><span class="punto"></span>En vivo</span>
+  </div>
+
+  @if (cargando()) {
+    <div class="text-center py-5 text-muted">
+      <span class="spinner-border me-2"></span>Cargando compras...
+    </div>
+  } @else if (compras().length === 0) {
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-circle-check fa-3x mb-3 text-success"></i>
+      <p class="h5">No hay compras pendientes.</p>
+      <p>Todas las compras están confirmadas.</p>
+    </div>
+  } @else {
+    <p class="text-muted">{{ compras().length }} compra(s) esperando confirmación</p>
+
+    <div class="row g-3">
+      @for (compra of compras(); track compra.id) {
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 compra-card" [class.nueva]="esNueva(compra.id)">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="small text-muted">
+                <i class="fa-regular fa-calendar me-1"></i>{{ compra.fechaCompra | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+              <span class="badge text-bg-warning">Pendiente</span>
+            </div>
+
+            <div class="card-body">
+              <p class="mb-2">
+                <i class="fa-solid fa-id-card me-1 text-muted"></i>
+                Cliente: <strong>{{ compra.cedulaUsuario }}</strong>
+              </p>
+
+              <ul class="list-unstyled small mb-3">
+                @for (detalle of compra.detalles; track detalle.idJuego) {
+                  <li class="d-flex justify-content-between">
+                    <span><i class="fa-solid fa-dice me-1 text-primary"></i>{{ nombreJuego(detalle.idJuego) }} × {{ detalle.cantidad }}</span>
+                    <span>{{ detalle.precioUnitario.precioProducto * detalle.cantidad | number:'1.0-0' }}</span>
+                  </li>
+                }
+              </ul>
+
+              @if (compra.codigoCupon) {
+                <p class="small text-success mb-1">
+                  <i class="fa-solid fa-ticket me-1"></i>Cupón {{ compra.codigoCupon }} (-{{ compra.porcentajeDescuento }}%)
+                </p>
+              }
+
+              <p class="h5 mb-0">
+                Total: {{ compra.totalAPagar.precioProducto | number:'1.0-0' }} COP
+              </p>
+            </div>
+
+            <div class="card-footer d-flex gap-2">
+              <button type="button" class="btn btn-success flex-grow-1"
+                      (click)="confirmar(compra)" [disabled]="confirmando() === compra.id">
+                @if (confirmando() === compra.id) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>Procesando...
+                } @else {
+                  <i class="fa-solid fa-check me-2"></i>Confirmar
+                }
+              </button>
+              <button type="button" class="btn btn-outline-danger"
+                      (click)="cancelar(compra)" [disabled]="confirmando() === compra.id">
+                <i class="fa-solid fa-rotate-left me-1"></i>Reembolsar
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

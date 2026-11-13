@@ -6,6 +6,7 @@ import { CompraResponse } from '../modelos/compras';
 export class ComprasService {
   private http = inject(HttpClient);
   private url = 'http://localhost:8080/api/compras';
+  private urlAdmin = 'http://localhost:8080/api/admin/compras';
 
   crear() {
     return this.http.post<CompraResponse>(this.url, {});
@@ -26,5 +27,21 @@ export class ComprasService {
   aplicarCupon(idCompra: string, codigo: string) {
     const params = new HttpParams().set('codigo', codigo);
     return this.http.patch<CompraResponse>(`${this.url}/${idCompra}/cupon`, null, { params });
+  }
+
+  misCompras() {
+    return this.http.get<CompraResponse[]>(`${this.url}/mias`);
+  }
+
+  pendientes() {
+    return this.http.get<CompraResponse[]>(`${this.urlAdmin}/pendientes`);
+  }
+
+  confirmar(id: string) {
+    return this.http.patch<void>(`${this.url}/${id}/confirmar`, null);
+  }
+
+  cancelar(id: string) {
+    return this.http.patch<CompraResponse>(`${this.url}/${id}/cancelar`, null);
   }
 }

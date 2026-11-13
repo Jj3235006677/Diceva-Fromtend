@@ -9,6 +9,7 @@ export class Auth {
 
   isAuthenticated = signal(!!localStorage.getItem('token'));
   nombre = signal(this.leerNombre());
+  esAdmin = signal(this.leerEsAdmin());
 
   login(credenciales: LoginRequest) {
     return this.http.post<TokenResponse>(this.url, credenciales);
@@ -18,6 +19,7 @@ export class Auth {
     localStorage.setItem('token', respuesta.token);
     localStorage.setItem('roles', JSON.stringify(respuesta.roles));
     this.nombre.set(this.leerNombre());
+    this.esAdmin.set(this.leerEsAdmin());
     this.isAuthenticated.set(true);
   }
 
@@ -29,6 +31,7 @@ export class Auth {
     localStorage.removeItem('token');
     localStorage.removeItem('roles');
     this.nombre.set('');
+    this.esAdmin.set(false);
     this.isAuthenticated.set(false);
   }
 
@@ -44,6 +47,15 @@ export class Auth {
       return usuario.charAt(0).toUpperCase() + usuario.slice(1);
     } catch {
       return '';
+    }
+  }
+
+  private leerEsAdmin(): boolean {
+    try {
+      const roles: string[] = JSON.parse(localStorage.getItem('roles') ?? '[]');
+      return roles.includes('ADMIN');
+    } catch {
+      return false;
     }
   }
 }

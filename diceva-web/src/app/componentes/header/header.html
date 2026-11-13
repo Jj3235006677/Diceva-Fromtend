@@ -5,52 +5,83 @@
       <i class="fa-solid fa-dice"></i>
       <span>DICEVA</span>
     </a>
-<!--boton de hamburguesa solo se ve en los celulares-->
+
     <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav me-auto gap-md-1">
         <li class="nav-item">
-          <a routerLink="/" routerLinkActive="active"
-             [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+          <a routerLink="/" routerLinkActive="activo"
+             [routerLinkActiveOptions]="{ exact: true }" class="nav-link enlace">
             <i class="fa-solid fa-house me-1"></i>Inicio
           </a>
         </li>
         <li class="nav-item">
-          <a routerLink="/catalogo" routerLinkActive="active" class="nav-link">
+          <a routerLink="/catalogo" routerLinkActive="activo" class="nav-link enlace">
             <i class="fa-solid fa-store me-1"></i>Catálogo
           </a>
         </li>
-        @if (authService.isAuthenticated()) {
+
+        @if (authService.isAuthenticated() && !authService.esAdmin()) {
           <li class="nav-item">
-            <a routerLink="/comprar" routerLinkActive="active" class="nav-link">
-              <i class="fa-solid fa-cart-shopping me-1"></i>Comprar
+            <a routerLink="/mis-compras" routerLinkActive="activo" class="nav-link enlace">
+              <i class="fa-solid fa-receipt me-1"></i>Mis compras
+            </a>
+          </li>
+        }
+
+        @if (authService.esAdmin()) {
+          <li class="nav-item">
+            <a routerLink="/admin/compras" routerLinkActive="activo-admin" class="nav-link enlace enlace-admin">
+              <i class="fa-solid fa-clipboard-check me-1"></i>Confirmar compras
+              <span class="etiqueta-admin">Admin</span>
             </a>
           </li>
         }
       </ul>
 
-            <div class="d-flex gap-2 align-items-center">
-        @if (authService.isAuthenticated()) {
-                    <div class="usuario d-flex align-items-center gap-2 me-2">
-            <span class="avatar">{{ authService.nombre().charAt(0) }}</span>
-            <div class="lh-sm">
-              <small class="text-muted d-block">Hola</small>
+      @if (authService.isAuthenticated()) {
+        <div class="dropdown">
+          <button type="button" class="usuario" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="avatar" [class.avatar-admin]="authService.esAdmin()">{{ authService.nombre().charAt(0) }}</span>
+            <span class="lh-sm text-start">
+              <small class="text-muted d-block">Hola,</small>
               <span class="fw-semibold">{{ authService.nombre() }}</span>
-            </div>
-          </div>
-          <button class="btn btn-outline-danger btn-sm" (click)="cerrarSesion()">
-            <i class="fa-solid fa-right-from-bracket me-1"></i>Cerrar sesión
+            </span>
+            <i class="fa-solid fa-chevron-down flecha"></i>
           </button>
-        } @else {
-          <a routerLink="/login" class="btn btn-outline-primary btn-sm">
-            <i class="fa-solid fa-right-to-bracket me-1"></i>Ingresar
-          </a>
-        }
-      </div>
+
+          <ul class="dropdown-menu dropdown-menu-end menu-usuario">
+            <li class="cabecera">
+              <span class="avatar avatar-grande" [class.avatar-admin]="authService.esAdmin()">{{ authService.nombre().charAt(0) }}</span>
+              <div>
+                <p class="fw-semibold mb-0">{{ authService.nombre() }}</p>
+                @if (authService.esAdmin()) {
+                  <span class="rol rol-admin"><i class="fa-solid fa-shield-halved me-1"></i>Administrador</span>
+                } @else {
+                  <span class="rol"><i class="fa-solid fa-user me-1"></i>Cliente</span>
+                }
+              </div>
+            </li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+              <button type="button" class="dropdown-item salir" (click)="cerrarSesion()">
+                <span class="icono-salir"><i class="fa-solid fa-right-from-bracket"></i></span>
+                Cerrar sesión
+              </button>
+            </li>
+          </ul>
+        </div>
+      } @else {
+        <a routerLink="/login" class="btn btn-primary btn-sm rounded-pill px-3">
+          <i class="fa-solid fa-right-to-bracket me-1"></i>Ingresar
+        </a>
+      }
     </div>
   </div>
 </nav>

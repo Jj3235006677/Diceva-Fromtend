@@ -1,14 +1,12 @@
-
-//Espejos de los dtos 
+// Espejos de los DTOs del backend
 export interface LoginRequest {
-    correo:string
-    contraseña:string}
+  correo: string;
+  contraseña: string;
+}
 
-
-export interface TokenResponse{
-    token:string 
-    type:string
-    expiredAt:string 
-    roles:string[]
-
+export interface TokenResponse {
+  token: string;
+  type: string;
+  expireAt: string;
+  roles: string[];
 }

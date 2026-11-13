@@ -1,0 +1,81 @@
+<div class="container mt-4 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <h1 class="h3 mb-0">
+      <i class="fa-solid fa-receipt me-2 text-primary"></i>Mis compras
+    </h1>
+  </div>
+  <p class="text-muted small mb-4">
+    <i class="fa-solid fa-rotate me-1"></i>Esta página se actualiza sola cada 10 segundos.
+  </p>
+
+  @if (cargando()) {
+    <div class="text-center py-5 text-muted">
+      <span class="spinner-border me-2"></span>Cargando tus compras...
+    </div>
+  } @else if (compras().length === 0) {
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-bag-shopping fa-3x mb-3"></i>
+      <p class="h5">Todavía no tienes compras.</p>
+      <a routerLink="/catalogo" class="btn btn-primary mt-2">
+        <i class="fa-solid fa-store me-2"></i>Ir al catálogo
+      </a>
+    </div>
+  } @else {
+    <div class="row g-3">
+      @for (compra of compras(); track compra.id) {
+        <div class="col-md-6">
+          <div class="card h-100 compra-card" [class.aprobada]="compra.estadoPago === 'APROBADO'" [class.cancelada]="compra.estadoPago === 'REEMBOLSADO'">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="small text-muted">
+                <i class="fa-regular fa-calendar me-1"></i>{{ compra.fechaCompra | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+              <span class="badge {{ claseEstado(compra.estadoPago) }}">
+                <i class="fa-solid {{ iconoEstado(compra.estadoPago) }} me-1"></i>{{ textoEstado(compra.estadoPago) }}
+              </span>
+            </div>
+
+            <div class="card-body">
+              <ul class="list-unstyled small mb-3">
+                @for (detalle of compra.detalles; track detalle.idJuego) {
+                  <li class="d-flex justify-content-between">
+                    <span><i class="fa-solid fa-dice me-1 text-primary"></i>{{ nombreJuego(detalle.idJuego) }} × {{ detalle.cantidad }}</span>
+                    <span>{{ detalle.precioUnitario.precioProducto * detalle.cantidad | number:'1.0-0' }}</span>
+                  </li>
+                }
+              </ul>
+
+              @if (compra.codigoCupon) {
+                <p class="small text-success mb-1">
+                  <i class="fa-solid fa-ticket me-1"></i>Cupón {{ compra.codigoCupon }} (-{{ compra.porcentajeDescuento }}%)
+                </p>
+              }
+
+              <p class="h5 mb-0">
+                Total: {{ compra.totalAPagar.precioProducto | number:'1.0-0' }} COP
+              </p>
+
+              @if (compra.estadoPago === 'PENDIENTE') {
+                <p class="small text-muted mt-2 mb-0">
+                  <i class="fa-solid fa-circle-info me-1"></i>Esperando la confirmación de DICEVA.
+                </p>
+              }
+            </div>
+
+            @if (compra.estadoPago === 'PENDIENTE') {
+              <div class="card-footer bg-transparent">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100"
+                        (click)="cancelar(compra)" [disabled]="cancelando() === compra.id">
+                  @if (cancelando() === compra.id) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>Procesando...
+                  } @else {
+                    <i class="fa-solid fa-rotate-left me-2"></i>Pedir reembolso
+                  }
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

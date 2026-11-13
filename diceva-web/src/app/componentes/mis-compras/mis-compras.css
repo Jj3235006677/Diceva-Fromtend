@@ -1,0 +1,13 @@
+.compra-card {
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.4s;
+}
+
+.compra-card.aprobada {
+  border-color: #198754;
+}
+
+.compra-card.cancelada {
+  opacity: 0.6;
+}
