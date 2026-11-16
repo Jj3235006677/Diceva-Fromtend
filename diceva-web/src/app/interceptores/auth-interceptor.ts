@@ -9,6 +9,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(Auth);
   const router = inject(Router);
   const avisos = inject(AvisosService);
+  
   const token = auth.getToken();
 
   const peticion = token
