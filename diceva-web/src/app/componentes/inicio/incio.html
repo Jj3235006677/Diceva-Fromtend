@@ -1,79 +1,94 @@
-<div class="container mt-5">
+<div class="container mt-4">
 
-  <div class="p-5 mb-5 bg-body-tertiary rounded-3 text-center shadow-sm">
-    <i class="fa-solid fa-dice fa-4x text-primary mb-3"></i>
-    <h1 class="display-5 fw-bold">Bienvenido a DICEVA</h1>
-    <p class="lead col-lg-8 mx-auto">
+  <!-- BIENVENIDA: arriba, más compacta -->
+  <div class="bienvenida mb-4 text-center">
+    <i class="fa-solid fa-dice fa-3x text-primary mb-2"></i>
+    @if (auth.isAuthenticated()) {
+      <h1 class="fw-bold mb-1">¡Hola, {{ auth.nombre() }}! Bienvenido a DICEVA</h1>
+    } @else {
+      <h1 class="fw-bold mb-1">Bienvenido a DICEVA</h1>
+    }
+    <p class="lead col-lg-8 mx-auto mb-3">
       Reúne a tu gente alrededor de la mesa. Aquí encuentras el juego para cada momento.
     </p>
-    <a routerLink="/catalogo" class="btn btn-primary btn-lg mt-2">
+    <a routerLink="/catalogo" class="btn btn-primary btn-lg rounded-pill px-4">
       <i class="fa-solid fa-store me-2"></i>Ver catálogo
     </a>
   </div>
 
-  <app-lanza-dados />
+  <!-- DADOS Y RANKING: lado a lado -->
+  <div class="row g-4 mb-5">
 
-  @if (podio().length > 0) {
-    <section class="ranking mb-5">
-      <div class="text-center mb-4">
-        <span class="etiqueta"><i class="fa-solid fa-fire me-1"></i>Ranking en tiempo real</span>
-        <h2 class="h3 fw-bold mt-3 mb-1">Los más vendidos</h2>
-        <p class="text-muted mb-0">Los juegos que más eligen nuestros clientes</p>
-      </div>
+    <div class="col-lg">
+      <app-lanza-dados />
+    </div>
 
-      <div class="podio">
-        @for (juego of podio(); track juego.nombre; let i = $index) {
-          <div [class]="'columna lugar-' + (i + 1)">
-            @if (i === 0) {
-              <i class="fa-solid fa-crown corona"></i>
-            } @else {
-              <div class="espacio-corona"></div>
+    @if (podio().length > 0) {
+      <div class="col-lg">
+          <section class="ranking tarjeta-ranking">
+            <div class="text-center mb-4">
+              <span class="etiqueta"><i class="fa-solid fa-fire me-1"></i>Ranking en tiempo real</span>
+              <h2 class="h3 fw-bold mt-3 mb-1">Los más vendidos</h2>
+              <p class="text-muted mb-0">Los juegos que más eligen nuestros clientes</p>
+            </div>
+
+            <div class="podio">
+              @for (juego of podio(); track juego.nombre; let i = $index) {
+                <div [class]="'columna lugar-' + (i + 1)">
+                  @if (i === 0) {
+                    <i class="fa-solid fa-crown corona"></i>
+                  } @else {
+                    <div class="espacio-corona"></div>
+                  }
+
+                  <div class="juego">
+                    <div class="portada"
+                         [style.background]="estilo(juego.nombre).fondo"
+                         [style.color]="estilo(juego.nombre).color">
+                      <i [class]="'fa-solid ' + estilo(juego.nombre).icono"></i>
+                      <span class="medalla">{{ i + 1 }}</span>
+                    </div>
+                    <p class="nombre">{{ juego.nombre }}</p>
+                    <p class="vendidos">{{ juego.cantidad }} vendidos</p>
+                  </div>
+
+                  <div class="escalon">{{ i + 1 }}</div>
+                </div>
+              }
+            </div>
+
+            @if (siguientes().length > 0) {
+              <div class="resto">
+                @for (juego of siguientes(); track juego.nombre; let i = $index) {
+                  <div class="fila" [style.animation-delay]="(1.1 + i * 0.12) + 's'">
+                    <span class="puesto">{{ i + 4 }}</span>
+                    <div class="mini"
+                         [style.background]="estilo(juego.nombre).fondo"
+                         [style.color]="estilo(juego.nombre).color">
+                      <i [class]="'fa-solid ' + estilo(juego.nombre).icono"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <div class="d-flex justify-content-between">
+                        <span class="fw-semibold">{{ juego.nombre }}</span>
+                        <span class="text-muted small">{{ juego.cantidad }} vendidos</span>
+                      </div>
+                      <div class="barra">
+                        <span [style.width.%]="porcentaje(juego.cantidad)"
+                              [style.background]="estilo(juego.nombre).color"
+                              [style.animation-delay]="(1.2 + i * 0.12) + 's'"></span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
             }
-
-            <div class="juego">
-              <div class="portada"
-                   [style.background]="estilo(juego.nombre).fondo"
-                   [style.color]="estilo(juego.nombre).color">
-                <i [class]="'fa-solid ' + estilo(juego.nombre).icono"></i>
-                <span class="medalla">{{ i + 1 }}</span>
-              </div>
-              <p class="nombre">{{ juego.nombre }}</p>
-              <p class="vendidos">{{ juego.cantidad }} vendidos</p>
-            </div>
-
-            <div class="escalon">{{ i + 1 }}</div>
-          </div>
-        }
+          </section>
       </div>
+    }
 
-      @if (siguientes().length > 0) {
-        <div class="resto">
-          @for (juego of siguientes(); track juego.nombre; let i = $index) {
-            <div class="fila" [style.animation-delay]="(1.1 + i * 0.12) + 's'">
-              <span class="puesto">{{ i + 4 }}</span>
-              <div class="mini"
-                   [style.background]="estilo(juego.nombre).fondo"
-                   [style.color]="estilo(juego.nombre).color">
-                <i [class]="'fa-solid ' + estilo(juego.nombre).icono"></i>
-              </div>
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between">
-                  <span class="fw-semibold">{{ juego.nombre }}</span>
-                  <span class="text-muted small">{{ juego.cantidad }} vendidos</span>
-                </div>
-                <div class="barra">
-                  <span [style.width.%]="porcentaje(juego.cantidad)"
-                        [style.background]="estilo(juego.nombre).color"
-                        [style.animation-delay]="(1.2 + i * 0.12) + 's'"></span>
-                </div>
-              </div>
-            </div>
-          }
-        </div>
-      }
-    </section>
-  }
+  </div>
 
+  <!-- LO QUE PUEDES HACER -->
   <div class="row g-4 text-center mb-5">
     <div class="col-md-4">
       <i class="fa-solid fa-magnifying-glass fa-2x text-primary mb-2"></i>

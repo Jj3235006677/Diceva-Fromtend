@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { JuegoMesa, RankingJuego, ResultadoPaginado } from '../modelos/juegoMesa';
+import { JuegoMesa, JuegoMesaRequest, RankingJuego, ResultadoPaginado } from '../modelos/juegoMesa';
 
 @Injectable({ providedIn: 'root' })
 export class JuegosService {
@@ -35,5 +35,13 @@ export class JuegosService {
     }
 
     return this.http.get<JuegoMesa[]>(`${this.url}/aleatorio`, { params });
+  }
+
+  crear(juego: JuegoMesaRequest) {
+    return this.http.post<JuegoMesa>(this.url, juego);
+  }
+
+  eliminar(id: string) {
+    return this.http.put<void>(`${this.url}/${id}/eliminacion-logica`, null);
   }
 }

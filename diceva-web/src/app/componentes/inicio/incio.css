@@ -1,3 +1,21 @@
+/* ===== BIENVENIDA (arriba) ===== */
+.bienvenida {
+  background: #f8f9fa;
+  border-radius: 20px;
+  padding: 32px 24px;
+}
+
+/* ===== TARJETA DEL RANKING (al lado de los dados) ===== */
+.tarjeta-ranking {
+  height: 100%;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  padding: 24px 20px;
+}
+
+/* ===== RANKING ===== */
+
+/* ===== RANKING ===== */
 .ranking {
   max-width: 560px;
   margin: 0 auto;

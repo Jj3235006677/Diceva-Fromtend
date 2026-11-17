@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { JuegosService } from '../../servicios/JuegosMesa';
+import { Auth } from '../../servicios/auth';
 import { RankingJuego } from '../../modelos/juegoMesa';
 import { LanzaDados } from '../lanza-dados/lanza-dados';
 
@@ -32,6 +33,7 @@ const ESTILO_POR_DEFECTO: EstiloJuego = { fondo: '#E6F1FB', color: '#0C447C', ic
 })
 export class Inicio {
   private juegosService = inject(JuegosService);
+  auth = inject(Auth);
 
   ranking = toSignal(this.juegosService.ranking(), { initialValue: [] as RankingJuego[] });
 

@@ -11,20 +11,17 @@
     <div class="col-lg-8">
       <div class="input-group mb-4">
         <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-        <input #busqueda type="text" class="form-control"
-               placeholder="Buscar juego por nombre..."
+        <input #caja type="text" class="form-control"
+               placeholder="Escribe para buscar un juego..."
                [value]="texto()"
-               (keyup.enter)="buscar(busqueda.value)" />
-        <button type="button" class="btn btn-primary" (click)="buscar(busqueda.value)">
-          Buscar
-        </button>
+               (input)="escribir(caja.value)" />
       </div>
 
       @if (juegos().length === 0) {
         <div class="text-center py-5 text-muted">
-          @if (texto()) {
+          @if (busqueda()) {
             <i class="fa-solid fa-magnifying-glass fa-3x mb-3"></i>
-            <p class="h5">No encontramos juegos con "{{ texto() }}".</p>
+            <p class="h5">No encontramos juegos con "{{ busqueda() }}".</p>
             <p>Prueba con otro nombre.</p>
           } @else {
             <i class="fa-solid fa-box-open fa-3x mb-3"></i>
@@ -81,14 +78,14 @@
 
         <div class="d-flex justify-content-center align-items-center gap-3 my-4">
           <button type="button" class="btn btn-outline-primary"
-                  (click)="anterior()" [disabled]="pagina() === 0">
+                  (click)="anterior()" [disabled]="esPrimera()">
             <i class="fa-solid fa-chevron-left me-1"></i>Anterior
           </button>
 
           <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
 
           <button type="button" class="btn btn-outline-primary"
-                  (click)="siguiente()" [disabled]="pagina() >= totalPaginas() - 1">
+                  (click)="siguiente()" [disabled]="esUltima()">
             Siguiente<i class="fa-solid fa-chevron-right ms-1"></i>
           </button>
         </div>
@@ -98,7 +95,7 @@
     <!-- Barra lateral: los dados y los más vendidos -->
     <aside class="col-lg-4">
       <app-lanza-dados />
-      <app-mas-vendidos (elegir)="buscar($event)" />
+      <app-mas-vendidos (elegir)="escribir($event)" />
     </aside>
 
   </div>

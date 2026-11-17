@@ -1,0 +1,146 @@
+<div class="container mt-4 mb-5">
+  <h1 class="h3 mb-4">
+    <i class="fa-solid fa-dice me-2 text-warning"></i>Administrar juegos
+    <span class="badge rounded-pill etiqueta-admin ms-2">Admin</span>
+  </h1>
+
+  <div class="row g-4">
+
+    <!-- Formulario para agregar -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm tarjeta">
+        <div class="card-header py-3">
+          <h2 class="h5 mb-0"><i class="fa-solid fa-plus me-2"></i>Agregar juego</h2>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="form" (ngSubmit)="crear()">
+
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input class="form-control" formControlName="nombre" placeholder="Ej: Exploding Kittens" />
+              @if (invalido('nombre')) { <div class="text-danger small">El nombre es obligatorio.</div> }
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              <textarea class="form-control" rows="2" formControlName="descripcion"></textarea>
+              @if (invalido('descripcion')) { <div class="text-danger small">La descripción es obligatoria.</div> }
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">Precio (COP)</label>
+                <input type="number" class="form-control" formControlName="precio" />
+                @if (invalido('precio')) { <div class="text-danger small">Mayor que 0.</div> }
+              </div>
+              <div class="col-6">
+                <label class="form-label">Stock</label>
+                <input type="number" class="form-control" formControlName="stock" />
+                @if (invalido('stock')) { <div class="text-danger small">No puede ser negativo.</div> }
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-4">
+                <label class="form-label">Mín. jugadores</label>
+                <input type="number" class="form-control" formControlName="minimoJugadores" />
+              </div>
+              <div class="col-4">
+                <label class="form-label">Máx. jugadores</label>
+                <input type="number" class="form-control" formControlName="maximoJugadores" />
+              </div>
+              <div class="col-4">
+                <label class="form-label">Edad</label>
+                <input type="number" class="form-control" formControlName="edadRecomendada" />
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">Complejidad</label>
+                <select class="form-select" formControlName="complejidad">
+                  <option value="BASICA">Básica</option>
+                  <option value="INTERMEDIA">Intermedia</option>
+                  <option value="AVANZADA">Avanzada</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Estado</label>
+                <select class="form-select" formControlName="estado">
+                  <option value="DISPONIBLE">Disponible</option>
+                  <option value="PREVENTA">Preventa</option>
+                  <option value="AGOTADO">Agotado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label">Mecánica</label>
+                <input class="form-control" formControlName="mecanicaDeJuego" placeholder="Ej: Cartas" />
+              </div>
+              <div class="col-6">
+                <label class="form-label">Temática</label>
+                <input class="form-control" formControlName="tematicaDeJuego" placeholder="Ej: Humor" />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">URL de la imagen</label>
+              <input class="form-control" formControlName="imagenUrl" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Código del proveedor</label>
+              <input class="form-control" formControlName="cedulaProveedor" />
+              <div class="form-text">Por defecto, el proveedor principal de DICEVA.</div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-warning fw-semibold" [disabled]="guardando()">
+                @if (guardando()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>Guardando...
+                } @else {
+                  <i class="fa-solid fa-floppy-disk me-2"></i>Agregar al catálogo
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista para eliminar -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm tarjeta">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+          <h2 class="h5 mb-0"><i class="fa-solid fa-list me-2"></i>Juegos en el catálogo</h2>
+          <span class="text-muted small">{{ juegos().length }} juegos</span>
+        </div>
+        <ul class="list-group list-group-flush">
+          @for (juego of juegos(); track juego.id) {
+            <li class="list-group-item d-flex align-items-center gap-3 fila">
+              <div class="flex-grow-1">
+                <p class="fw-semibold mb-0">{{ juego.nombre }}</p>
+                <p class="small text-muted mb-0">
+                  {{ juego.precio.precioProducto | number:'1.0-0' }} COP · {{ juego.stock }} en stock · {{ juego.estado }}
+                </p>
+              </div>
+              <button type="button" class="btn btn-outline-danger btn-sm"
+                      (click)="eliminar(juego)" [disabled]="eliminando() === juego.id">
+                @if (eliminando() === juego.id) {
+                  <span class="spinner-border spinner-border-sm"></span>
+                } @else {
+                  <i class="fa-solid fa-trash me-1"></i>Eliminar
+                }
+              </button>
+            </li>
+          } @empty {
+            <li class="list-group-item text-center text-muted py-4">No hay juegos en el catálogo.</li>
+          }
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>

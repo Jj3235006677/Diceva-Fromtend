@@ -5,6 +5,7 @@ import { Catalogo } from './componentes/catalogo/catalogo';
 import { Comprar } from './componentes/comprar/comprar';
 import { MisCompras } from './componentes/mis-compras/mis-compras';
 import { ConfirmarCompras } from './componentes/confirmar-compras/confirmar-compras';
+import { AdminJuegos } from './componentes/admin-juegos/admin-juegos';
 import { authGuard, guestGuard, adminGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'comprar', component: Comprar, canActivate: [authGuard] },
   { path: 'mis-compras', component: MisCompras, canActivate: [authGuard] },
   { path: 'admin/compras', component: ConfirmarCompras, canActivate: [authGuard, adminGuard] },
+  { path: 'admin/juegos', component: AdminJuegos, canActivate: [authGuard, adminGuard] },
   { path: '**', redirectTo: '' }
 ];

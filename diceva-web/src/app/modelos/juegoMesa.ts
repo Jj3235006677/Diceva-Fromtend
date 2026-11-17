@@ -41,8 +41,26 @@ export interface ResultadoPaginado<T> {
 }
 
 
+// Lo que se envía para crear un juego (espejo de JuegoMesaRequest)
+export interface JuegoMesaRequest {
+  cedulaProveedor: string;
+  nombre: string;
+  descripcion: string;
+  precio: Precio;
+  stock: number;
+  rangoJugadores: RangoJugadores;
+  complejidad: ComplejidadJuego;
+  mecanicaDeJuego: string;
+  tematicaDeJuego: string;
+  edadRecomendada: number;
+  imagenUrl: string;
+  estado: EstadoJuego;
+}
+
+
 // Espejo de RankingJuegoResponse
 export interface RankingJuego {
   nombre: string;
   cantidad: number;
+
 }

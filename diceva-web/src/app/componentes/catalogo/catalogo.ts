@@ -1,60 +1,76 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, debounceTime, distinctUntilChanged, interval, of, switchMap } from 'rxjs';
 import { JuegosService } from '../../servicios/JuegosMesa';
-import { EstadoJuego, JuegoMesa } from '../../modelos/juegoMesa';
+import { AvisosService } from '../../servicios/avisos';
+import { EstadoJuego, JuegoMesa, ResultadoPaginado } from '../../modelos/juegoMesa';
 import { MasVendidos } from '../mas-vendidos/mas-vendidos';
 import { LanzaDados } from '../lanza-dados/lanza-dados';
 
 @Component({
-  imports: [DecimalPipe, RouterLink, MasVendidos, LanzaDados],
   selector: 'app-catalogo',
-  styleUrl: './catalogo.css',
+  imports: [DecimalPipe, RouterLink, MasVendidos, LanzaDados],
   templateUrl: './catalogo.html',
+  styleUrl: './catalogo.css',
 })
 export class Catalogo {
   private juegosService = inject(JuegosService);
-  private destroyRef = inject(DestroyRef);
+  private avisos = inject(AvisosService);
 
-  juegos = signal<JuegoMesa[]>([]);
+  // En qué página estoy y qué estoy escribiendo
+  readonly tamanio = 4;
   pagina = signal(0);
-  totalPaginas = signal(0);
   texto = signal('');
-  private tamanio = 4;
 
-  constructor() {
-    this.cargar();
-  }
+  // Reloj: hace "tic" cada 10 segundos para refrescar el catálogo solo
+  private reloj = toSignal(interval(10000), { initialValue: 0 });
 
-  cargar(): void {
-    this.juegosService.listar(this.texto(), this.pagina(), this.tamanio)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(resultado => {
-        this.juegos.set(resultado.contenido);
-        this.totalPaginas.set(resultado.totalPaginas);
-      });
-  }
+  // Lo que se busca de verdad: espera 400 ms después de la última letra
+  busqueda = toSignal(
+    toObservable(this.texto).pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ),
+    { initialValue: '' }
+  );
 
-  buscar(valor: string): void {
-    this.texto.set(valor.trim());
+  // Junta la página, la búsqueda y el reloj en un solo objeto
+  private consulta = computed(() => ({
+    pagina: this.pagina(),
+    busqueda: this.busqueda(),
+    tic: this.reloj(),
+  }));
+
+  // Cada vez que cambia la consulta, le pide al backend esa página
+  respuesta = toSignal(
+    toObservable(this.consulta).pipe(
+      switchMap(c =>
+        this.juegosService.listar(c.busqueda.trim(), c.pagina, this.tamanio).pipe(
+          catchError(() => {
+            this.avisos.error('No pudimos cargar el catálogo.');
+            return of(null);
+          })
+        )
+      )
+    ),
+    { initialValue: null as ResultadoPaginado<JuegoMesa> | null }
+  );
+
+  juegos = computed(() => this.respuesta()?.contenido ?? []);
+  totalPaginas = computed(() => this.respuesta()?.totalPaginas ?? 0);
+  total = computed(() => this.respuesta()?.totalElementos ?? 0);
+  esPrimera = computed(() => this.pagina() === 0);
+  esUltima = computed(() => this.pagina() >= this.totalPaginas() - 1);
+
+  escribir(valor: string): void {
+    this.texto.set(valor);
     this.pagina.set(0);
-    this.cargar();
   }
 
-  anterior(): void {
-    if (this.pagina() > 0) {
-      this.pagina.update(p => p - 1);
-      this.cargar();
-    }
-  }
-
-  siguiente(): void {
-    if (this.pagina() < this.totalPaginas() - 1) {
-      this.pagina.update(p => p + 1);
-      this.cargar();
-    }
-  }
+  anterior(): void { this.pagina.update(p => p - 1); }
+  siguiente(): void { this.pagina.update(p => p + 1); }
 
   badgeEstado(estado: EstadoJuego): string {
     switch (estado) {
