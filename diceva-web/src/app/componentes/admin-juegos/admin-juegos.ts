@@ -21,6 +21,9 @@ export class AdminJuegos {
   guardando = signal(false);
   eliminando = signal<string | null>(null);
 
+  // Proveedor principal de DICEVA (el backend lo pide como UUID)
+  private readonly PROVEEDOR_DICEVA = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+
   form = inject(FormBuilder).nonNullable.group({
     nombre: ['', [Validators.required, Validators.maxLength(100)]],
     descripcion: ['', Validators.required],
@@ -34,7 +37,6 @@ export class AdminJuegos {
     mecanicaDeJuego: ['', Validators.required],
     tematicaDeJuego: ['', Validators.required],
     imagenUrl: ['https://placehold.co/400x250?text=DICEVA', Validators.required],
-    cedulaProveedor: ['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', Validators.required],
   });
 
   constructor() {
@@ -63,7 +65,7 @@ export class AdminJuegos {
 
     const f = this.form.getRawValue();
     const juego: JuegoMesaRequest = {
-      cedulaProveedor: f.cedulaProveedor,
+      cedulaProveedor: this.PROVEEDOR_DICEVA,
       nombre: f.nombre.trim(),
       descripcion: f.descripcion.trim(),
       precio: { precioProducto: f.precio },

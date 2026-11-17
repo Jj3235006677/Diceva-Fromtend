@@ -90,12 +90,6 @@
               <input class="form-control" formControlName="imagenUrl" />
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Código del proveedor</label>
-              <input class="form-control" formControlName="cedulaProveedor" />
-              <div class="form-text">Por defecto, el proveedor principal de DICEVA.</div>
-            </div>
-
             <div class="d-grid">
               <button type="submit" class="btn btn-warning fw-semibold" [disabled]="guardando()">
                 @if (guardando()) {
