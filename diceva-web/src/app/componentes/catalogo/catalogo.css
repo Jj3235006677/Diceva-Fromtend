@@ -4,6 +4,12 @@
   object-fit: cover;
 }
  
+
+
+
+
+
+
 .juego-card.agotado {
   opacity: 0.6;
 }
