@@ -77,3 +77,6 @@ Además, en todas las pantallas:
 | Carpeta | Qué contiene |
 |---|---|
 | `modelos` | Interfaces espejo de los DTOs del backend, con los mismos nombres de campos |
+| `servicios` | Un servicio por grupo de endpoints: `Auth`, `JuegosService`, `ComprasService`, `CuponesService` y `AvisosService`. Los componentes nunca escriben direcciones de la API |
+| `guards` | `authGuard` (rutas con sesión), `guestGuard` (saca del login a quien ya entró) y `adminGuard` (solo el ADMIN entra a Confirmar compras y Administrar juegos) |
+| `interceptores` | Interceptor que agrega `Authorization:
