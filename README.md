@@ -86,4 +86,4 @@ Además, en todas las pantallas:
 
 ## Tecnologías
 
-Angular, Signals, formularios reactivos, Bootstrap y Font Awesome.
+Angular, Signals, formularios reactivos, Bootstrap.
